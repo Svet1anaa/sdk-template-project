@@ -108,3 +108,19 @@ There is no POST, PUT, DELETE, registration or authentication logic in
 
 the code. The documentation describes an intended future state, not the current implementation.
 
+
+## e. Request trace: GET /users
+
+1. frontend/src/components/users.js — renderUsers() calls
+   fetchData(`${apiUrl}/users`)
+2. frontend/src/api/api.js — fetchData() performs fetch(url)
+3. apiUrl comes from frontend/src/main.js — config.usersApiUrl,
+   read from VITE_USERS_API_URL, defaults to http://localhost:8000
+4. users-service/main.py — route @app.get("/users") receives the request
+5. users-service/main.py — conn.fetch(f'SELECT {USER_COLUMNS} FROM "User"')
+   runs against the "User" table in ecommerce_db. Note: the password column
+   is deliberately excluded from USER_COLUMNS, so it never reaches the API
+   response even though the route uses no authentication.
+6. frontend/src/components/users.js — renderUsers() sets container.innerHTML
+   to render the returned JSON as a list
+
