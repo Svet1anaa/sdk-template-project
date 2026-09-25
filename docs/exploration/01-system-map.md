@@ -124,3 +124,20 @@ the code. The documentation describes an intended future state, not the current 
 6. frontend/src/components/users.js — renderUsers() sets container.innerHTML
    to render the returned JSON as a list
 
+## f. Request trace: GET /orders
+
+1. frontend/src/components/orders.js — renderOrders() calls
+   fetchData(`${apiUrl}/orders`)
+2. frontend/src/api/api.js — fetchData() performs fetch(url)
+3. apiUrl comes from frontend/src/main.js — config.ordersApiUrl,
+   read from VITE_ORDERS_API_URL, defaults to http://localhost:8083
+4. orders-service/.../controller/OrderController.java — route
+   @GetMapping("/orders") in getAllOrders() receives the request
+5. orders-service/.../repository/OrderRepository.java — extends
+   JpaRepository<Order, Integer>. findAll() is inherited from JpaRepository
+   and generates the SQL automatically via JPA/Hibernate (no manual SQL
+   in this service, unlike products-service and users-service), querying
+   the table mapped by the Order entity.
+6. frontend/src/components/orders.js — renderOrders() sets
+   container.innerHTML to render the returned JSON as a list
+
